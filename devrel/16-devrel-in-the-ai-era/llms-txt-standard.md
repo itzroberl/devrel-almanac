@@ -1,0 +1,139 @@
+# The `llms.txt` Standard
+
+The single most-discussed agent-facing DevRel convention of 2024–2026. Proposed by **Jeremy Howard** (Answer.AI, fast.ai) on **September 3, 2024**, `llms.txt` is a markdown-based file placed at the root of a website (e.g. `example.com/llms.txt`) that gives large language models a structured, machine-friendly overview of the site's content.
+
+The specification is at [llmstxt.org](https://llmstxt.org).
+
+## Origin and intent
+
+Howard's framing, in the original Answer.AI announcement, was:
+
+- Robots.txt and sitemaps were designed for search-engine crawlers.
+- LLMs need different signals: they want *content*, structured for machine reading, not just *URLs*.
+- A small, well-formed file at a canonical path can give LLMs a high-signal overview of what the site is about, what its key sections are, and where to find the canonical material.
+
+The spec defines a Markdown file with:
+
+- An H1 title (the site / product name).
+- A blockquote summary.
+- Optional sections of links with short descriptions.
+
+That's it. The standard is intentionally minimal, and that minimalism is partly why it spread fast.
+
+## The "index + export" pattern
+
+A pattern emerged quickly: two files, not one.
+
+- **`/llms.txt`** — A small index. Sub-10,000 tokens. Title, summary, lists of key pages with descriptions and links. Designed for real-time agents that need a fast overview.
+- **`/llms-full.txt`** — A fuller export. The complete documentation concatenated into a single Markdown file. Useful for ingestion pipelines, RAG systems, and IDE indexing.
+
+Anthropic's docs at `docs.anthropic.com/llms.txt` (8,364 tokens) and `docs.anthropic.com/llms-full.txt` (481,349 tokens) are the canonical example of this pattern.
+
+## Adoption
+
+The trajectory has been unusual: rapid adoption at the documentation-tooling layer, slower adoption among headline sites, mixed empirical evidence of effect.
+
+### The Mintlify acceleration
+
+In late 2024, **Mintlify** began auto-generating `llms.txt` and `llms-full.txt` for every docs site it hosted. Because Mintlify hosts the documentation for many high-visibility AI-era developer products (Anthropic, Cursor, Resend, Perplexity, and others), this single decision brought thousands of docs sites online with `llms.txt` essentially overnight.
+
+Similar features rolled out at GitBook, Docusaurus plugins, ReadMe, Redocly, and Astro Starlight through 2025.
+
+### Adoption statistics
+
+- **BuiltWith (October 2025)** counted roughly 844,000 websites implementing `llms.txt`.
+- **SE Ranking (2026)** found ~10.13% adoption across crawled domains (≈ 300,000 domains in their dataset).
+- **Rankability (June 2025)** at one point measured only 0.3% adoption among top-1,000 sites — much lower than the broader web. By 2026, that share had grown but high-authority domains still lagged smaller developer-focused sites.
+- **ALLMO 2026 audit** found that of the top 50 most-cited domains in major AI assistants, only one had `llms.txt`. Adoption is concentrated in mid-tier developer-product sites; large media and high-authority sites have not prioritised it.
+
+### Notable adopters (verified, mid-2026)
+
+- **Anthropic** (Claude docs) — Both `llms.txt` and `llms-full.txt`.
+- **Vercel** — Across multiple product and documentation surfaces.
+- **Stripe** — Partial adoption on developer docs.
+- **Cloudflare** — Organised by product / service.
+- **Mintlify** — Authors the standard for its hosting customers.
+- **Cursor** — IDE-integration docs.
+- **Hugging Face, Replicate, Perplexity** — Versions on their docs sites.
+- **NVIDIA** — Split implementation (smaller `llms.txt` for tech docs; large file for main site).
+
+Notably **not yet (publicly) adopted by**: OpenAI, Google, official Meta AI docs, Microsoft Learn (as of mid-2026).
+
+## The empirical question — does it work?
+
+This is where the honest version diverges from the marketing version.
+
+The marketing claim: `llms.txt` improves your visibility in AI assistants' answers, drives more AI-mediated traffic, and is a critical 2026 DevRel investment.
+
+The empirical reality (as of mid-2026):
+
+1. **No major model vendor has publicly confirmed that their inference systems actively consume `llms.txt` as a primary signal.** Anthropic, OpenAI, and Google have not issued statements that their assistants prefer or even reliably read `llms.txt` files.
+2. **Citation studies have found mixed or null effects.** Two notable 2026 studies (Signals.sh; SEO Engico) found no measurable lift in AI citations correlated with publishing `llms.txt`.
+3. **Server-log evidence is thin.** Some analyses of production server logs (Signals.sh) report essentially zero AI bots fetching `llms.txt` files specifically.
+
+This does not mean `llms.txt` is worthless. It means the case for it as of mid-2026 is more "low-cost reasonable precaution" than "proven driver of AI-mediated traffic."
+
+## Why DevRel teams still do it
+
+Five honest reasons:
+
+1. **Low cost.** Auto-generated by Mintlify and similar; trivial to maintain.
+2. **Forcing function for documentation hygiene.** Producing a clean `llms.txt` requires producing a clean information architecture, which is independently valuable.
+3. **Future-proofing.** If AI assistants start reading `llms.txt` files in 2027 or 2028, the work is already done. The cost of being wrong is small.
+4. **Signal to developers.** Some developers explicitly look for `llms.txt` as a sign of "this team takes the AI era seriously." Brand effect.
+5. **Adjacency.** `llms.txt` adoption correlates with adoption of broader AI-readable practices (clean Markdown, structured docs, machine-friendly URLs) that *are* observed to affect AI citations.
+
+## What a good `llms.txt` contains
+
+The standard is minimal, but the practical good version includes:
+
+- **Clear product identity.** What you are, in one sentence. Use the canonical name.
+- **A short product description.** Two to four sentences.
+- **Sections organised by topic** with short descriptions of each linked page.
+- **Stable, canonical URLs.** Don't link to redirects; don't link to deprecated paths.
+- **Explicit dates and versions** where applicable.
+- **Cross-links** to your `llms-full.txt`, OpenAPI spec, MCP server, and key sample-app repositories.
+
+Examples worth studying (mid-2026):
+
+- `docs.anthropic.com/llms.txt`
+- `nextjs.org/llms.txt`
+- `docs.stripe.com/llms.txt`
+- `developers.cloudflare.com/llms.txt`
+
+## Common failure modes
+
+- **Auto-generated and forgotten.** Mintlify auto-generates one, but the team never reviews it. The file ends up listing dead pages or outdated names.
+- **Marketing copy.** The team treats `llms.txt` as a brand opportunity. AI assistants don't care; the file just looks performative.
+- **No `llms-full.txt`.** The summary index is fine; the full export is missing. Ingestion pipelines that prefer full text can't use the site.
+- **Too large.** Some `llms-full.txt` files become so large (hundreds of thousands of tokens) that retrieval systems silently truncate them.
+- **Stale URLs.** Site reorganisations break `llms.txt` links; the file goes uncorrected.
+
+## How `llms.txt` fits in the broader AI-readable-content stack
+
+`llms.txt` is one of several agent-readable conventions. Others, varyingly mature:
+
+- **OpenAPI / GraphQL** — Standard for years; LLMs read these heavily.
+- **MCP servers** — The structural sibling of `llms.txt` for capabilities rather than docs. See [`./mcp-as-devrel-surface.md`](mcp-as-devrel-surface.md).
+- **`/.well-known/` URLs** — Various conventions (security.txt, ai.txt) for site-level signals.
+- **Schema.org / JSON-LD markup** — Embedded structured data; underrated AI-readability tool.
+- **Sitemaps.xml** — Still useful; AI crawlers read them.
+- **robots.txt** — Often misconfigured; ensure `GPTBot`, `ClaudeBot`, `PerplexityBot`, `OAI-SearchBot`, `Google-Extended` are explicitly allowed for the surfaces you want AI to read.
+
+A practical AI-readable stack in 2026 includes: clean information architecture, `llms.txt` and `llms-full.txt`, OpenAPI spec, MCP server, schema.org markup, accurate sitemap, deliberate `robots.txt`, and YouTube videos with full transcripts (because LLMs read transcripts heavily).
+
+## See also
+
+- [`./mcp-as-devrel-surface.md`](mcp-as-devrel-surface.md)
+- [`./documentation-for-agents.md`](documentation-for-agents.md)
+- [`./geo-aeo-for-devrel.md`](geo-aeo-for-devrel.md)
+- [`../08-tools/documentation-tools.md`](../08-tools/documentation-tools.md)
+- [`../10-tactics/documentation-as-product.md`](../10-tactics/documentation-as-product.md)
+
+## Primary sources
+
+- Jeremy Howard (Answer.AI), "/llms.txt — a proposal to provide information to help LLMs use your website," September 3, 2024.
+- The `llms.txt` specification at llmstxt.org.
+- Mintlify documentation and blog posts on `llms.txt` implementation.
+- Signals.sh, "Does `llms.txt` actually work?" (2026).
+- SE Ranking and Rankability adoption tracking, 2025–2026.
