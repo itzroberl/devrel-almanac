@@ -112,6 +112,10 @@ The category in 2026 splits roughly into:
 - **RapidDoc** — Alternative OpenAPI renderer.
 - **Slate** — Markdown-driven, three-column docs (historic; less actively maintained now).
 - **Docsy** — Hugo-based theme widely used by CNCF projects.
+- **[Sourcey](https://sourcey.com/oss)**. Open-source generator for combining OpenAPI, MCP,
+  Doxygen XML, godoc, rustdoc, MkDocs, and Markdown in one self-hosted static HTML site. Its
+  mixed-source workflow is useful when reference and guides need one build; choose another tool
+  when a hosted editor or non-HTML output is required.
 
 ---
 
@@ -143,6 +147,7 @@ Three architectural choices that matter more than tool selection:
 | Have a complex API + need interactive consoles | ReadMe |
 | Want non-engineers to contribute | GitBook |
 | Are designing the API from scratch | Stoplight |
+| Need one self-hosted site from mixed API, code-reference, and Markdown sources | Sourcey |
 | Run open-source on Hugo/Jekyll already | Stay on your generator; add Docsy or similar themes |
 | Want enterprise versioned multi-product portal | Redocly |
 
