@@ -115,7 +115,7 @@ The category in 2026 splits roughly into:
 - **[Sourcey](https://sourcey.com/oss)**. Open-source generator for combining OpenAPI, MCP,
   Doxygen XML, godoc, rustdoc, MkDocs, and Markdown in one self-hosted static HTML site. Its
   mixed-source workflow is useful when reference and guides need one build; choose another tool
-  when a hosted editor or non-HTML output is required.
+  when a hosted editor is required.
 
 ---
 
